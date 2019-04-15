@@ -1,7 +1,6 @@
 ﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -10,6 +9,8 @@ public class Player : MonoBehaviour
     public float jumpforce = 10f;
     public Rigidbody2D circle;
     public SpriteRenderer _sr;
+    public GameObject[] obstacle;
+    public GameObject colorChanger;
     public Color blue;
     public Color yellow;
     public Color pink;
@@ -39,20 +40,37 @@ public class Player : MonoBehaviour
         {
           score++;
           Destroy(collision.gameObject);
+          int randObs = Random.Range(0,3);
+
+          switch (randObs)
+          {
+              case 0:
+                Instantiate(obstacle[0], new Vector2(transform.position.x, transform.position.y +7f), transform.rotation);
+              break;
+
+              case 1:
+                Instantiate(obstacle[1], new Vector2(transform.position.x, transform.position.y +7f), transform.rotation);
+              break;
+
+              case 2:
+                Instantiate(obstacle[2], new Vector2(transform.position.x, transform.position.y +7f), transform.rotation);
+              break;
+          }
+  
           return;  
         }
         if(collision.tag == "ColorChanger")
         {
             setRandomColor();
-            Destroy(collision.gameObject);
+            Destroy(collision.gameObject);           
+            Instantiate(colorChanger, new Vector2(transform.position.x, transform.position.y +7f), transform.rotation);
             return;
         }
         // if the color of the player doesn't match the segment they passed through
         // game is over.
         if(collision.tag != currentColor)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            Debug.Log("You Died!");
+            GameControl.instance.GameOver ();
             score = 0;
         }
     }
